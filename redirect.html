@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening App...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 { font-size: 24px; margin-bottom: 10px; }
+        p { font-size: 16px; opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h1>Opening App...</h1>
+        <p id="status">Please wait</p>
+    </div>
+
+    <script>
+        // CONFIGURATION - YOUR PACKAGE NAME
+        const APP_SCHEME = "nfcapp://open";  // Custom scheme to open app
+        const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.UnityTechnologies.com.unity.template.urpblank";
+        const APP_STORE_URL = "https://apps.apple.com/app/idYOUR_APP_ID";  // For iOS (optional)
+        
+        // Get any parameters from URL (optional - for passing data to app)
+        const urlParams = new URLSearchParams(window.location.search);
+        const data = urlParams.get('data') || '';
+        
+        // Try to open the app
+        function tryOpenApp() {
+            // Update status
+            document.getElementById('status').textContent = "Launching app...";
+            
+            // Detect platform
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isAndroid = /android/i.test(userAgent);
+            const isIOS = /iphone|ipad|ipod/i.test(userAgent);
+            
+            if (isAndroid) {
+                // Try to open Android app
+                window.location.href = APP_SCHEME + (data ? '?data=' + data : '');
+                
+                // Set timeout to redirect to Play Store if app doesn't open
+                setTimeout(function() {
+                    document.getElementById('status').textContent = "Redirecting to Play Store...";
+                    window.location.href = PLAY_STORE_URL;
+                }, 2500);
+                
+            } else if (isIOS) {
+                // iOS - redirect to App Store
+                document.getElementById('status').textContent = "Redirecting to App Store...";
+                setTimeout(function() {
+                    window.location.href = APP_STORE_URL;
+                }, 1000);
+                
+            } else {
+                // Desktop or unknown platform
+                document.getElementById('status').textContent = "This link is for mobile devices";
+            }
+        }
+        
+        // Start the process immediately
+        tryOpenApp();
+        
+        // Fallback: If user comes back to the page, show Play Store link
+        window.addEventListener('pageshow', function() {
+            setTimeout(function() {
+                document.getElementById('status').innerHTML = 
+                    'App not opening? <a href="' + PLAY_STORE_URL + '" style="color: white; text-decoration: underline;">Tap here</a>';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
