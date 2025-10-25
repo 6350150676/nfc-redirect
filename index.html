@@ -49,33 +49,26 @@
         
         // Get art ID from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const artId = urlParams.get('id') || '0';
+        const artId = urlParams.get('art_id') || '0';
         
         console.log('Art ID:', artId);
-
         function tryOpenApp() {
             document.getElementById('status').textContent = "Opening artwork #" + artId;
-
             const userAgent = navigator.userAgent.toLowerCase();
             const isAndroid = /android/i.test(userAgent);
-
             if (isAndroid) {
                 // Open app with art ID parameter
                 window.location.href = APP_SCHEME + "?artId=" + artId;
-
                 // Fallback to Play Store
                 setTimeout(function() {
                     document.getElementById('status').textContent = "Redirecting to Play Store...";
                     window.location.href = PLAY_STORE_URL;
                 }, 2500);
-
             } else {
                 document.getElementById('status').textContent = "This link is for mobile devices";
             }
         }
-
         tryOpenApp();
-
         window.addEventListener('pageshow', function() {
             setTimeout(function() {
                 document.getElementById('status').innerHTML = 
