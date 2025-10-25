@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opening App...</title>
+    <title>Opening Art Gallery...</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,57 +39,43 @@
 <body>
     <div class="container">
         <div class="spinner"></div>
-        <h1>Opening App...</h1>
-        <p id="status">Please wait</p>
+        <h1>Opening Art Gallery...</h1>
+        <p id="status">Loading artwork</p>
     </div>
-
     <script>
-        // CONFIGURATION - YOUR PACKAGE NAME
-        const APP_SCHEME = "nfcapp://open";  // Custom scheme to open app
+        // CONFIGURATION
+        const APP_SCHEME = "nfcapp://open";
         const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.UnityTechnologies.com.unity.template.urpblank";
-        const APP_STORE_URL = "https://apps.apple.com/app/idYOUR_APP_ID";  // For iOS (optional)
         
-        // Get any parameters from URL (optional - for passing data to app)
+        // Get art ID from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const data = urlParams.get('data') || '';
+        const artId = urlParams.get('id') || '0';
         
-        // Try to open the app
+        console.log('Art ID:', artId);
+
         function tryOpenApp() {
-            // Update status
-            document.getElementById('status').textContent = "Launching app...";
-            
-            // Detect platform
+            document.getElementById('status').textContent = "Opening artwork #" + artId;
+
             const userAgent = navigator.userAgent.toLowerCase();
             const isAndroid = /android/i.test(userAgent);
-            const isIOS = /iphone|ipad|ipod/i.test(userAgent);
-            
+
             if (isAndroid) {
-                // Try to open Android app
-                window.location.href = APP_SCHEME + (data ? '?data=' + data : '');
-                
-                // Set timeout to redirect to Play Store if app doesn't open
+                // Open app with art ID parameter
+                window.location.href = APP_SCHEME + "?artId=" + artId;
+
+                // Fallback to Play Store
                 setTimeout(function() {
                     document.getElementById('status').textContent = "Redirecting to Play Store...";
                     window.location.href = PLAY_STORE_URL;
                 }, 2500);
-                
-            } else if (isIOS) {
-                // iOS - redirect to App Store
-                document.getElementById('status').textContent = "Redirecting to App Store...";
-                setTimeout(function() {
-                    window.location.href = APP_STORE_URL;
-                }, 1000);
-                
+
             } else {
-                // Desktop or unknown platform
                 document.getElementById('status').textContent = "This link is for mobile devices";
             }
         }
-        
-        // Start the process immediately
+
         tryOpenApp();
-        
-        // Fallback: If user comes back to the page, show Play Store link
+
         window.addEventListener('pageshow', function() {
             setTimeout(function() {
                 document.getElementById('status').innerHTML = 
