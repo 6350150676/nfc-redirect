@@ -34,6 +34,12 @@
         }
         h1 { font-size: 24px; margin-bottom: 10px; }
         p { font-size: 16px; opacity: 0.9; }
+        .debug {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.7;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -41,6 +47,7 @@
         <div class="spinner"></div>
         <h1>Opening Art Gallery...</h1>
         <p id="status">Loading artwork</p>
+        <div class="debug" id="debug"></div>
     </div>
     <script>
         // CONFIGURATION
@@ -49,30 +56,49 @@
         
         // Get art ID from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const artId = urlParams.get('art_id') || '0';
+        const artId = urlParams.get('art_id') || '0';  // Get art_id from URL
         
-        console.log('Art ID:', artId);
+        console.log('Art ID from URL:', artId);
+        
+        // Show debug info
+        document.getElementById('debug').textContent = 'art_id=' + artId;
+        
         function tryOpenApp() {
             document.getElementById('status').textContent = "Opening artwork #" + artId;
+            
             const userAgent = navigator.userAgent.toLowerCase();
             const isAndroid = /android/i.test(userAgent);
+            
             if (isAndroid) {
-                // Open app with art ID parameter
-                window.location.href = APP_SCHEME + "?artId=" + artId;
-                // Fallback to Play Store
+                // IMPORTANT: Use artId (camelCase) not art_id for the deep link
+                const deepLink = APP_SCHEME + "?artId=" + artId;
+                
+                console.log('Opening deep link:', deepLink);
+                document.getElementById('debug').textContent = 'Opening: ' + deepLink;
+                
+                // Try to open the app
+                window.location.href = deepLink;
+                
+                // Fallback to Play Store after delay
                 setTimeout(function() {
                     document.getElementById('status').textContent = "Redirecting to Play Store...";
+                    console.log('Fallback to Play Store');
                     window.location.href = PLAY_STORE_URL;
                 }, 2500);
             } else {
-                document.getElementById('status').textContent = "This link is for mobile devices";
+                document.getElementById('status').textContent = "This link is for Android devices only";
+                document.getElementById('debug').textContent = 'Not Android device';
             }
         }
+        
+        // Start the process
         tryOpenApp();
+        
+        // Additional fallback
         window.addEventListener('pageshow', function() {
             setTimeout(function() {
                 document.getElementById('status').innerHTML = 
-                    'App not opening? <a href="' + PLAY_STORE_URL + '" style="color: white; text-decoration: underline;">Tap here</a>';
+                    'App not opening? <a href="' + PLAY_STORE_URL + '" style="color: white; text-decoration: underline;">Tap here to install</a>';
             }, 3000);
         });
     </script>
