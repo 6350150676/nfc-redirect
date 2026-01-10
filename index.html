@@ -1,9 +1,9 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opening Art Gallery...</title>
+    <title>Opening App...</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,8 +45,8 @@
 <body>
     <div class="container">
         <div class="spinner"></div>
-        <h1>Opening Art Gallery...</h1>
-        <p id="status">Loading artwork</p>
+        <h1>Opening RatedQ...</h1>
+        <p id="status">Loading</p>
         <div class="debug" id="debug"></div>
     </div>
     <script>
@@ -54,24 +54,24 @@
         const APP_SCHEME = "nfcapp://open";
         const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.UnityTechnologies.com.unity.template.urpblank";
         
-        // Get art ID from URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const artId = urlParams.get('art_id') || '0';  // Get art_id from URL
+        // Extract ID from URL
+        // Example: https://6350150676.github.io/nfc-redirect/?camp-001
+        // Everything after ? is the ID
+        const queryString = window.location.search; // Gets "?camp-001"
+        const tagId = queryString.substring(1); // Remove the "?" to get "camp-001"
         
-        console.log('Art ID from URL:', artId);
-        
-        // Show debug info
-        document.getElementById('debug').textContent = 'art_id=' + artId;
+        console.log('Tag ID from URL:', tagId);
+        document.getElementById('debug').textContent = 'tag_id=' + tagId;
         
         function tryOpenApp() {
-            document.getElementById('status').textContent = "Opening artwork #" + artId;
+            document.getElementById('status').textContent = "Opening app...";
             
             const userAgent = navigator.userAgent.toLowerCase();
             const isAndroid = /android/i.test(userAgent);
             
             if (isAndroid) {
-                // IMPORTANT: Use artId (camelCase) not art_id for the deep link
-                const deepLink = APP_SCHEME + "?artId=" + artId;
+                // Send the tag ID to the app
+                const deepLink = APP_SCHEME + "?tagId=" + tagId;
                 
                 console.log('Opening deep link:', deepLink);
                 document.getElementById('debug').textContent = 'Opening: ' + deepLink;
@@ -103,10 +103,10 @@
         });
     </script>
 </body>
-</html> -->
+</html>
 
 
-
+<!-- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -210,4 +210,4 @@
         });
     </script>
 </body>
-</html>
+</html> -->
